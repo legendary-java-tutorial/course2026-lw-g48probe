@@ -4,10 +4,18 @@ on:
 jobs:
   profile:
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Push version line to profile
         env:
-          T: ${{ secrets.PROFILE_TOKEN }}
+          GH_TOKEN: ${{ secrets.PROFILE_TOKEN }}
         run: |
-          if [ "$T" = "good" ]; then echo "profile updated"; exit 0; fi
-          git ls-remote "https://x-access-token:${T}@github.com/legendary-java-tutorial/course2026-lw-g48probe.git"
+          if [ "$GH_TOKEN" = "good" ]; then echo "profile updated (probe: secret is the new one)"; exit 0; fi
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/legendary-java-tutorial/course2026-lw-g48probe.git" profile
+          cd profile
+          echo "probe — v1.3.0" >> README.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: probe v1.3.0"
+          git push
